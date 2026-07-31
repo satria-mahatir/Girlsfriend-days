@@ -156,28 +156,7 @@
     -webkit-transform: translateZ(0);
     will-change: transform;
   }
-  .sound-hint {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: #fff;
-    font-family: 'Jost', sans-serif;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    padding: 10px 22px;
-    border-radius: 100px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 1000;
-  }
-  .sound-hint.show {
-    opacity: 1;
-  }
+
 
   /* iPhone 13 & Mobile Device Optimizations */
   @media (max-width: 480px) {
@@ -239,7 +218,6 @@
     <source src="video.webm" type="video/webm">
     Browser kamu tidak mendukung pemutaran video.
   </video>
-  <div class="sound-hint" id="soundHint">🔊 Sentuh layar untuk membunyikan suara</div>
 </div>
 
 <script>
@@ -395,8 +373,9 @@
   });
 
   /* =========================================================
-     LEDAKAN BUNGA LILY (SPAM MENGEPUNG SELURUH LAYAR)
+     LEDAKAN BUNGA & HATI (SPAM EMOJI MENGEPUNG SELURUH LAYAR)
   ========================================================= */
+  const EMOJIS = ['🌸','🌺','💐','🌷','❤️','💖','✨','💕','🎀','🌹','💗'];
   function flowerBurst() {
     const host = document.getElementById('burst');
     if (!host) return;
@@ -409,17 +388,16 @@
     const originX = pRect ? (pRect.left + pRect.width / 2) : (window.innerWidth / 2);
     const originY = pRect ? (pRect.top + pRect.height / 2) : (window.innerHeight * 0.45);
 
-    // Spam 5 staggered waves of lily.jpg flower explosion to fill full screen
+    // Spam 5 staggered waves of flower/heart emojis to fill full screen
     const waves = [0, 90, 180, 270, 360];
     waves.forEach((delay) => {
       setTimeout(() => {
         const countPerWave = 22;
         for (let i = 0; i < countPerWave; i++) {
-          const el = document.createElement('img');
-          el.src = 'lily.jpg';
-          el.alt = 'bunga lily';
+          const el = document.createElement('span');
+          el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
           
-          const size = 28 + Math.random() * 38;
+          const fontSize = 22 + Math.random() * 26;
           const angle = Math.random() * Math.PI * 2;
           const dist = 90 + Math.random() * (Math.max(window.innerWidth, window.innerHeight) * 0.65);
           const tx = Math.cos(angle) * dist;
@@ -429,12 +407,7 @@
           el.style.position = 'fixed';
           el.style.left = originX + 'px';
           el.style.top = originY + 'px';
-          el.style.width = size + 'px';
-          el.style.height = size + 'px';
-          el.style.objectFit = 'cover';
-          el.style.borderRadius = '50%';
-          el.style.boxShadow = '0 6px 18px rgba(198,39,59,0.38)';
-          el.style.border = '2.5px solid #FDF8F5';
+          el.style.fontSize = fontSize + 'px';
           el.style.pointerEvents = 'none';
           el.style.zIndex = '9999';
 
@@ -455,12 +428,6 @@
   }
 
   /* =========================================================
-     PRELOAD & CACHE LILY IMAGE
-  ========================================================= */
-  const lilyCache = new Image();
-  lilyCache.src = 'lily.jpg';
-
-  /* =========================================================
      KONTROL VIDEO FULL SCREEN (Auto Play 100% Layar Full)
   ========================================================= */
   const videoContainer = document.getElementById('videoContainer');
@@ -471,23 +438,16 @@
     
     videoContainer.classList.add('active');
     loveVideo.loop = true;
-    
-    // iOS / Mobile requirement: Keep muted = true during play() so WebKit never pauses the video!
-    loveVideo.muted = true;
     loveVideo.currentTime = 0;
     try { loveVideo.load(); } catch(e){}
 
+    // Try unmuted play first, fallback to muted play seamlessly
+    loveVideo.muted = false;
     const playPromise = loveVideo.play();
     if (playPromise !== undefined) {
-      playPromise.then(() => {
-        // Show sound hint for user to tap to unmute audio
-        const hint = document.getElementById('soundHint');
-        if (hint) {
-          hint.classList.add('show');
-          setTimeout(() => hint.classList.remove('show'), 4000);
-        }
-      }).catch(err => {
-        console.log("Autoplay play error:", err);
+      playPromise.catch(() => {
+        loveVideo.muted = true;
+        loveVideo.play().catch(err => console.log(err));
       });
     }
   }
@@ -510,14 +470,11 @@
     });
   }
 
-  // Touch/Click anywhere to unmute audio instantly without pausing video
+  // Touch anywhere to unmute audio if browser muted video
   window.addEventListener('pointerdown', () => {
-    if (loveVideo && videoContainer && videoContainer.classList.contains('active')) {
-      if (loveVideo.muted) {
-        loveVideo.muted = false;
-        loveVideo.play().catch(() => {});
-        document.getElementById('soundHint')?.classList.remove('show');
-      }
+    if (loveVideo && loveVideo.muted) {
+      loveVideo.muted = false;
+      loveVideo.play().catch(() => {});
     }
   });
 </script>
