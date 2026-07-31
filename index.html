@@ -203,7 +203,7 @@
     <div class="hero-top">
       <p class="tag">happy</p>
       <h1>National Girlfriend Day</h1>
-      <p class="sub">put us back together</p>
+      <p class="sub">widyaaa sayangg ❤️</p>
     </div>
 
     <div class="puzzle-wrap" id="puzzleWrap">
@@ -257,22 +257,22 @@
   const pieceDefs = [
     { 
       key: 'tl', 
-      clip: 'M 0 0 L 100 0 L 100 44 C 97 44, 96 48, 102 51 C 114 55, 114 65, 102 69 C 96 72, 97 76, 100 76 L 100 100 L 76 100 C 76 97, 72 96, 69 102 C 65 114, 55 114, 51 102 C 48 96, 44 97, 44 100 L 0 100 Z',
+      clip: 'M 0 0 L 100 0 L 100 70 C 97 70, 96 74, 102 77 C 114 81, 114 89, 102 93 C 96 95, 97 98, 100 98 L 100 100 L 76 100 C 76 97, 72 96, 69 102 C 65 114, 55 114, 51 102 C 48 96, 44 97, 44 100 L 0 100 Z',
       scatter: [-60, -35, -14]
     },
     { 
       key: 'tr', 
-      clip: 'M 100 0 L 200 0 L 200 100 L 176 100 C 176 97, 172 96, 169 98 C 165 86, 155 86, 151 98 C 148 96, 144 97, 144 100 L 100 100 L 100 76 C 97 76, 96 72, 102 69 C 114 65, 114 55, 102 51 C 96 48, 97 44, 100 44 Z',
+      clip: 'M 100 0 L 200 0 L 200 100 L 162 100 C 162 97, 158 96, 155 102 C 151 88, 141 88, 137 102 C 134 96, 130 97, 130 100 L 100 100 L 100 98 C 97 98, 96 95, 102 93 C 114 89, 114 81, 102 77 C 96 74, 97 70, 100 70 Z',
       scatter: [210, -25, 12]
     },
     { 
       key: 'bl', 
-      clip: 'M 0 100 L 44 100 C 44 97, 48 96, 51 102 C 55 114, 65 114, 69 102 C 72 96, 76 97, 76 100 L 100 100 L 100 134 C 97 134, 96 138, 98 141 C 86 145, 86 155, 98 159 C 96 162, 97 166, 100 166 L 100 200 L 0 200 Z',
+      clip: 'M 0 100 L 44 100 C 44 97, 48 96, 51 102 C 55 114, 65 114, 69 102 C 72 96, 76 97, 76 100 L 100 100 L 100 114 C 97 114, 96 118, 98 121 C 86 125, 86 133, 98 137 C 96 139, 97 142, 100 142 L 100 200 L 0 200 Z',
       scatter: [-70, 180, 10]
     },
     { 
       key: 'br', 
-      clip: 'M 100 100 L 144 100 C 144 97, 148 96, 151 98 C 155 86, 165 86, 169 98 C 172 96, 176 97, 176 100 L 200 100 L 200 200 L 100 200 L 100 166 C 97 166, 96 162, 98 159 C 86 155, 86 145, 98 141 C 96 138, 97 134, 100 134 Z',
+      clip: 'M 100 100 L 130 100 C 130 97, 134 96, 137 102 C 141 88, 151 88, 155 102 C 158 96, 162 97, 162 100 L 200 100 L 200 200 L 100 200 L 100 142 C 97 142, 96 139, 98 137 C 86 133, 86 125, 98 121 C 96 118, 97 114, 100 114 Z',
       scatter: [215, 185, -12]
     }
   ];
@@ -378,9 +378,9 @@
     }, 1200);
   }
 
-  document.getElementById('replayBtn').addEventListener('click', () => {
+  document.getElementById('replayBtn')?.addEventListener('click', () => {
     resetPuzzle();
-    document.getElementById('hero').scrollIntoView({ behavior:'smooth' });
+    document.getElementById('hero')?.scrollIntoView({ behavior:'smooth' });
   });
 
   /* =========================================================
@@ -389,6 +389,7 @@
   const FLOWERS = ['🌸','🌺','💐','🌷','❤️','💖','✨','💕','🎀','🌹'];
   function flowerBurst() {
     const host = document.getElementById('burst');
+    if (!host) return;
     host.innerHTML = '';
     
     const pWrap = document.getElementById('puzzleWrap');
@@ -437,42 +438,37 @@
   }
 
   /* =========================================================
-     SCROLL REVEAL
-  ========================================================= */
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.4 });
-  document.querySelectorAll('.reveal, .lyric').forEach(el => io.observe(el));
-
-  /* =========================================================
      KONTROL VIDEO FULL SCREEN (Auto Play 100% Layar Full)
   ========================================================= */
   const videoContainer = document.getElementById('videoContainer');
   const loveVideo = document.getElementById('loveVideo');
 
   function playVideo() {
-    if (videoContainer && loveVideo) {
-      videoContainer.classList.add('active');
-      loveVideo.loop = true;
-      loveVideo.currentTime = 0;
-      try { loveVideo.load(); } catch(e){}
+    if (!videoContainer || !loveVideo) return;
+    
+    videoContainer.classList.add('active');
+    loveVideo.loop = true;
+    loveVideo.currentTime = 0;
+    try { loveVideo.load(); } catch(e){}
 
-      // Try unmuted autoplay first (since user just interacted via drag)
-      loveVideo.muted = false;
-      const playPromise = loveVideo.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // If iOS Safari/mobile blocks unmuted autoplay, autoplay muted & show tap hint
-          loveVideo.muted = true;
-          loveVideo.play().then(() => {
-            const hint = document.getElementById('soundHint');
-            if (hint) {
-              hint.classList.add('show');
-              setTimeout(() => hint.classList.remove('show'), 4000);
-            }
-          }).catch(err => console.log(err));
-        });
-      }
+    // iOS Safari requirement: set muted = true before play() to guarantee 100% autoplay
+    loveVideo.muted = true;
+    const playPromise = loveVideo.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // Attempt unmuting audio immediately
+        loveVideo.muted = false;
+      }).catch(() => {
+        // If unmuting is blocked without explicit tap gesture, show hint
+        loveVideo.muted = true;
+        loveVideo.play().catch(() => {});
+        const hint = document.getElementById('soundHint');
+        if (hint) {
+          hint.classList.add('show');
+          setTimeout(() => hint.classList.remove('show'), 4000);
+        }
+      });
     }
   }
 
