@@ -76,9 +76,9 @@
   .hero-top .sub{ font-family:'Playfair Display',serif; font-style:italic; font-size:16px; margin-top:14px; color:var(--ink); }
 
   .puzzle-wrap{ position:relative; width:300px; height:300px; margin:26px auto 10px; touch-action:none; }
-  .slot-guide{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:150px; height:150px; pointer-events:none; }
+  .slot-guide{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:220px; height:220px; pointer-events:none; }
   .piece{
-    position:absolute; width:150px; height:150px; cursor:grab;
+    position:absolute; width:220px; height:220px; cursor:grab;
     filter:drop-shadow(0 8px 16px rgba(198,39,59,0.35));
     touch-action:none;
     user-select:none;
@@ -248,22 +248,22 @@
     { 
       key: 'tl', 
       clip: 'M 0 0 L 100 0 L 100 70 C 97 70, 96 74, 102 77 C 114 81, 114 89, 102 93 C 96 95, 97 98, 100 98 L 100 100 L 76 100 C 76 97, 72 96, 69 102 C 65 114, 55 114, 51 102 C 48 96, 44 97, 44 100 L 0 100 Z',
-      scatter: [-12, -15, -6]
+      scatter: [-15, -20, -6]
     },
     { 
       key: 'tr', 
       clip: 'M 100 0 L 200 0 L 200 100 L 162 100 C 162 97, 158 96, 155 102 C 151 88, 141 88, 137 102 C 134 96, 130 97, 130 100 L 100 100 L 100 98 C 97 98, 96 95, 102 93 C 114 89, 114 81, 102 77 C 96 74, 97 70, 100 70 Z',
-      scatter: [162, -15, 6]
+      scatter: [95, -20, 6]
     },
     { 
       key: 'bl', 
       clip: 'M 0 100 L 44 100 C 44 97, 48 96, 51 102 C 55 114, 65 114, 69 102 C 72 96, 76 97, 76 100 L 100 100 L 100 114 C 97 114, 96 118, 98 121 C 86 125, 86 133, 98 137 C 96 139, 97 142, 100 142 L 100 200 L 0 200 Z',
-      scatter: [-12, 162, 5]
+      scatter: [-15, 100, 5]
     },
     { 
       key: 'br', 
       clip: 'M 100 100 L 130 100 C 130 97, 134 96, 137 102 C 141 88, 151 88, 155 102 C 158 96, 162 97, 162 100 L 200 100 L 200 200 L 100 200 L 100 142 C 97 142, 96 139, 98 137 C 86 133, 86 125, 98 121 C 96 118, 97 114, 100 114 Z',
-      scatter: [162, 162, -5]
+      scatter: [95, 100, -5]
     }
   ];
 
@@ -292,9 +292,9 @@
     piece.style.transform = `rotate(${rot}deg)`;
     piece.dataset.rot = rot;
 
-    // All pieces assemble to targetX=75, targetY=75 inside the 300x300 container
-    const targetX = 75;
-    const targetY = 75;
+    // All pieces assemble to targetX=40, targetY=40 inside the 300x300 container (for 220px piece)
+    const targetX = 40;
+    const targetY = 40;
 
     let dragging = false, offX = 0, offY = 0;
 
@@ -325,7 +325,7 @@
       const curY = parseFloat(piece.style.top);
       const dist = Math.hypot(curX - targetX, curY - targetY);
       piece.style.transition = 'left .3s ease, top .3s ease, transform .3s ease';
-      if (dist < 35) {
+      if (dist < 40) {
         piece.style.left = targetX + 'px';
         piece.style.top = targetY + 'px';
         piece.style.transform = 'rotate(0deg)';
