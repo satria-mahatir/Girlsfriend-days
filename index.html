@@ -86,12 +86,18 @@
     will-change: transform, left, top;
     -webkit-transform-style: preserve-3d;
     -webkit-backface-visibility: hidden;
+    pointer-events: none;
   }
   .piece.locked{ cursor:default; filter:drop-shadow(0 2px 5px rgba(198,39,59,0.18)); }
   .piece svg, .slot-guide{ 
     width:100%; height:100%; display:block; pointer-events:none; 
     shape-rendering: geometricPrecision;
     text-rendering: optimizeLegibility;
+  }
+  .piece path {
+    pointer-events: visiblePainted;
+    cursor: grab;
+    touch-action: none;
   }
   .hint{ text-align:center; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:14px; }
   .hint.done{ color:var(--red); }
@@ -298,16 +304,26 @@
 
     let dragging = false, offX = 0, offY = 0;
 
-    piece.addEventListener('pointerdown', (e) => {
+    const onPointerDown = (e) => {
       if (piece.classList.contains('locked')) return;
       dragging = true;
-      piece.setPointerCapture(e.pointerId);
+      
+      // Instantly bring touched piece to highest z-index above all others
+      pieces.forEach(p => p.piece.style.zIndex = 1);
+      piece.style.zIndex = 100;
+
+      if (e.target && e.target.setPointerCapture) {
+        try { e.target.setPointerCapture(e.pointerId); } catch(err){}
+      }
       const r = piece.getBoundingClientRect();
       offX = e.clientX - r.left;
       offY = e.clientY - r.top;
       piece.style.transition = 'none';
-      piece.style.zIndex = 10;
-    });
+    };
+
+    const heartPathEl = piece.querySelector('path');
+    piece.addEventListener('pointerdown', onPointerDown);
+    if (heartPathEl) heartPathEl.addEventListener('pointerdown', onPointerDown);
 
     piece.addEventListener('pointermove', (e) => {
       if (!dragging) return;
