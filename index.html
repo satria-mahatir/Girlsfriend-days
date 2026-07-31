@@ -383,16 +383,21 @@
     piece.innerHTML = `
       <svg viewBox="0 0 200 200">
         <defs>
-          <clipPath id="clip-${q.key}"><path d="${q.clip}"/></clipPath>
+          <clipPath id="piece-clip-${q.key}"><path d="${q.clip}"/></clipPath>
+          <clipPath id="heart-clip-${q.key}"><path d="${HEART_PATH}"/></clipPath>
         </defs>
-        <!-- Heart Red Fill -->
-        <path d="${HEART_PATH}" fill="#C6273B" clip-path="url(#clip-${q.key})"/>
-        <!-- Soft Inner 3D Highlight -->
-        <path d="${HEART_PATH}" fill="none" stroke="rgba(255,220,225,0.4)" stroke-width="2.5" clip-path="url(#clip-${q.key})"/>
-        <!-- Interlocking Jigsaw Seams (Clipped to heart - NO square box!) -->
-        <path d="${ALL_SEAMS}" fill="none" stroke="#7E1220" stroke-width="2" clip-path="url(#clip-${q.key})"/>
-        <!-- Pure Heart Outer Contour -->
-        <path d="${HEART_PATH}" fill="none" stroke="#7E1220" stroke-width="1.8" clip-path="url(#clip-${q.key})"/>
+        <g clip-path="url(#heart-clip-${q.key})">
+          <g clip-path="url(#piece-clip-${q.key})">
+            <!-- Heart Red Fill -->
+            <path d="${HEART_PATH}" fill="#C6273B"/>
+            <!-- Soft Inner 3D Highlight -->
+            <path d="${HEART_PATH}" fill="none" stroke="rgba(255,220,225,0.45)" stroke-width="2.5"/>
+            <!-- Interlocking Jigsaw Seams (Strictly inside heart - NO offside lines!) -->
+            <path d="${ALL_SEAMS}" fill="none" stroke="#7E1220" stroke-width="2.2"/>
+          </g>
+          <!-- Outer Heart Contour Stroke -->
+          <path d="${HEART_PATH}" fill="none" stroke="#7E1220" stroke-width="2"/>
+        </g>
       </svg>
     `;
     wrap.appendChild(piece);
