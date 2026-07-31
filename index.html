@@ -144,8 +144,14 @@
   #loveVideo {
     width: 100vw;
     height: 100vh;
-    object-fit: cover;
+    object-fit: contain;
+    background: #000;
     display: block;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
   }
   .sound-hint {
     position: absolute;
@@ -472,12 +478,21 @@
     }
   }
 
-  // Fallback listener agar video selalu looping berulang dari awal
+  // Triple-layer looping system for instant seamless video loop on completion
   if (loveVideo) {
     loveVideo.loop = true;
-    loveVideo.addEventListener('ended', () => {
-      loveVideo.currentTime = 0;
-      loveVideo.play().catch(() => {});
+    loveVideo.setAttribute('loop', 'true');
+
+    loveVideo.addEventListener('ended', function() {
+      this.currentTime = 0;
+      this.play().catch(function() {});
+    });
+
+    loveVideo.addEventListener('timeupdate', function() {
+      if (this.duration && this.currentTime >= (this.duration - 0.15)) {
+        this.currentTime = 0;
+        this.play().catch(function() {});
+      }
     });
   }
 
