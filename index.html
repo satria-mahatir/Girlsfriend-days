@@ -125,19 +125,19 @@
   #closing p{ font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--ink); margin-top:10px; max-width:280px; }
   .replay-btn{ margin-top:26px; border:none; cursor:pointer; background:var(--red); color:#fff; font-family:'Jost',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; padding:13px 26px; border-radius:100px; box-shadow:0 12px 24px rgba(198,39,59,0.3); }
 
-  /* ============ FULL SCREEN VIDEO DISPLAY (CINEMATIC BLUR & HD) ============ */
+  /* ============ FULL SCREEN VIDEO DISPLAY (100% COVER EDGE-TO-EDGE NO BLACK BARS) ============ */
   #videoContainer {
     position: fixed;
     inset: 0;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, rgba(231,196,201,0.95), rgba(247,222,224,0.95));
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    z-index: 999;
+    background: #F7DEE0;
+    z-index: 9999;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.5s ease;
     overflow: hidden;
   }
   #videoContainer.active {
@@ -145,11 +145,14 @@
     pointer-events: auto;
   }
   #loveVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    object-fit: cover;
+    object-fit: cover !important;
     display: block;
-    background: transparent;
+    background: #F7DEE0;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
     transform: translateZ(0);
@@ -209,9 +212,9 @@
 
 </div>
 
-<!-- FULL SCREEN VIDEO DISPLAY (100% FULL LAYAR NO BACKGROUND) -->
+<!-- FULL SCREEN VIDEO DISPLAY (100% FULL LAYAR NO BLACK BARS) -->
 <div id="videoContainer">
-  <video id="loveVideo" playsinline autoplay loop muted preload="auto">
+  <video id="loveVideo" playsinline -webkit-playsinline webkit-playsinline="true" x5-playsinline autoplay loop muted preload="auto" style="object-fit: cover !important; width: 100vw !important; height: 100vh !important; background: #F7DEE0;">
     <source src="vidio.mp4" type="video/mp4">
     <source src="video.mp4" type="video/mp4">
     <source src="video.mov" type="video/quicktime">
@@ -438,16 +441,18 @@
     
     videoContainer.classList.add('active');
     loveVideo.loop = true;
+    loveVideo.muted = true;
     loveVideo.currentTime = 0;
     try { loveVideo.load(); } catch(e){}
 
-    // Try unmuted play first, fallback to muted play seamlessly
-    loveVideo.muted = false;
     const playPromise = loveVideo.play();
     if (playPromise !== undefined) {
-      playPromise.catch(() => {
+      playPromise.then(() => {
+        // Attempt unmuting audio immediately
+        loveVideo.muted = false;
+      }).catch(err => {
         loveVideo.muted = true;
-        loveVideo.play().catch(err => console.log(err));
+        loveVideo.play().catch(e => console.log(e));
       });
     }
   }
