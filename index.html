@@ -117,81 +117,50 @@
   #closing p{ font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--ink); margin-top:10px; max-width:280px; }
   .replay-btn{ margin-top:26px; border:none; cursor:pointer; background:var(--red); color:#fff; font-family:'Jost',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; padding:13px 26px; border-radius:100px; box-shadow:0 12px 24px rgba(198,39,59,0.3); }
 
-  /* ============ SEAMLESS VIDEO OVERLAY (TANPA LATAR KOTAK) ============ */
-  .video-modal {
+  /* ============ FULL SCREEN VIDEO DISPLAY (100% LAYAR FULL) ============ */
+  #videoContainer {
     position: fixed;
     inset: 0;
-    background: rgba(20, 15, 14, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease;
-    padding: 20px;
+    transition: opacity 0.7s ease;
+    overflow: hidden;
   }
-  .video-modal.active {
+  #videoContainer.active {
     opacity: 1;
     pointer-events: auto;
   }
-  .video-wrapper {
-    position: relative;
-    width: 100%;
-    max-width: 360px;
-    border-radius: 22px;
-    overflow: hidden;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.65);
-    transform: scale(0.88);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    background: transparent;
-  }
-  .video-modal.active .video-wrapper {
-    transform: scale(1);
-  }
-  .video-wrapper video {
-    width: 100%;
-    max-height: 72vh;
+  #loveVideo {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
     display: block;
-    border-radius: 22px;
-    outline: none;
-    background: #000;
   }
-  .video-close-btn {
+  .sound-hint {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: #fff;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10;
-    transition: transform 0.2s, background 0.2s;
-  }
-  .video-close-btn:hover {
-    transform: scale(1.1);
-    background: rgba(198, 39, 59, 0.85);
-  }
-  .video-hint {
-    margin-top: 14px;
     font-family: 'Jost', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.7);
+    padding: 10px 22px;
+    border-radius: 100px;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1000;
+  }
+  .sound-hint.show {
+    opacity: 1;
   }
 
   /* iPhone 13 & Mobile Device Optimizations */
@@ -243,81 +212,18 @@
   <!-- flower burst overlay, spawned by JS -->
   <div id="burst"></div>
 
-  <!-- ============== LYRIC PANELS ============== -->
-  <section class="lyric grid-bg reveal">
-    <span class="deco star" style="top:10%;left:8%;">★</span>
-    <span class="deco bang" style="top:6%;right:10%;">!</span>
-    <p>you look so beautiful today</p>
-    <span class="deco spark" style="bottom:12%;left:14%;">✦</span>
-  </section>
-
-  <section class="lyric grid-bg reveal">
-    <span class="deco spark" style="top:12%;right:12%;">✦</span>
-    <p>and I love this view</p>
-    <span class="deco bang" style="bottom:8%;left:10%;">!</span>
-  </section>
-
-  <section class="lyric grid-bg reveal">
-    <span class="deco star" style="top:8%;left:12%;">★</span>
-    <p>we fell in love in october</p>
-    <span class="deco spark" style="bottom:10%;right:14%;">✦</span>
-  </section>
-
-  <section class="lyric grid-bg reveal">
-    <span class="deco bang" style="top:10%;right:10%;">!</span>
-    <p>that's why</p>
-    <span class="deco star" style="bottom:12%;left:12%;">★</span>
-  </section>
-
-  <section class="lyric grid-bg reveal">
-    <span class="deco spark" style="top:10%;left:10%;">✦</span>
-    <p>looking at the way you smile</p>
-    <span class="deco bang" style="bottom:10%;right:12%;">!</span>
-  </section>
-
-  <section class="lyric grid-bg reveal">
-    <span class="deco star" style="top:10%;right:12%;">★</span>
-    <p>admiring you from right beside me</p>
-    <span class="deco spark" style="bottom:10%;left:14%;">✦</span>
-  </section>
-
-  <!-- ============== GALLERY ============== -->
-  <section id="gallery" class="reveal">
-    <p class="eyebrow">for you</p>
-    <h2>my girl</h2>
-    <div class="polaroids">
-      <!-- FOTO 1 -->
-      <figure class="polaroid p1"><img src="WhatsApp Image 2026-07-29 at 13.12.13.jpeg" alt="my girl 1"><figcaption>my girl</figcaption></figure>
-      <!-- FOTO 2 -->
-      <figure class="polaroid p2"><img src="WhatsApp Image 2026-07-29 at 13.12.14.jpeg" alt="my girl 2"><figcaption>my girl</figcaption></figure>
-      <!-- FOTO 3 -->
-      <figure class="polaroid p3"><img src="WhatsApp Image 2026-07-29 at 13.12.14 (1).jpeg" alt="my girl 3"><figcaption>my girl</figcaption></figure>
-    </div>
-  </section>
-
-  <!-- ============== CLOSING ============== -->
-  <section id="closing" class="reveal">
-    <svg class="heart-final" viewBox="0 0 200 200"><path d="M100 175 C 30 120, 10 75, 45 40 C 70 15, 100 35, 100 60 C 100 35, 130 15, 155 40 C 190 75, 170 120, 100 175 Z" fill="var(--red)"/></svg>
-    <h2>Happy National Girlfriend Day</h2>
-    <p>every piece of you is my favorite part.</p>
-    <button class="replay-btn" id="replayBtn">Put Us Back Together Again</button>
-  </section>
-
 </div>
 
-<!-- VIDEO OVERLAY (Tanpa latar kotak, langsung video seamless) -->
-<div class="video-modal" id="videoModal">
-  <div class="video-wrapper">
-    <button class="video-close-btn" id="closeVideoBtn" title="Tutup video">✕</button>
-    <video id="loveVideo" playsinline controls loop preload="auto">
-      <source src="vidio.mp4" type="video/mp4">
-      <source src="video.mp4" type="video/mp4">
-      <source src="video.mov" type="video/quicktime">
-      <source src="video.webm" type="video/webm">
-      Browser kamu tidak mendukung pemutaran video.
-    </video>
-  </div>
-  <p class="video-hint">Ketuk di luar video untuk menutup ❤️</p>
+<!-- FULL SCREEN VIDEO DISPLAY (100% FULL LAYAR NO BACKGROUND) -->
+<div id="videoContainer">
+  <video id="loveVideo" playsinline autoplay loop muted preload="auto">
+    <source src="vidio.mp4" type="video/mp4">
+    <source src="video.mp4" type="video/mp4">
+    <source src="video.mov" type="video/quicktime">
+    <source src="video.webm" type="video/webm">
+    Browser kamu tidak mendukung pemutaran video.
+  </video>
+  <div class="sound-hint" id="soundHint">🔊 Sentuh layar untuk membunyikan suara</div>
 </div>
 
 <script>
@@ -532,30 +438,38 @@
   document.querySelectorAll('.reveal, .lyric').forEach(el => io.observe(el));
 
   /* =========================================================
-     KONTROL VIDEO (Muncul & Play Looping Saat Puzzle Selesai)
+     KONTROL VIDEO FULL SCREEN (Auto Play 100% Layar Full)
   ========================================================= */
-  const videoModal = document.getElementById('videoModal');
+  const videoContainer = document.getElementById('videoContainer');
   const loveVideo = document.getElementById('loveVideo');
-  const closeVideoBtn = document.getElementById('closeVideoBtn');
 
   function playVideo() {
-    if (videoModal && loveVideo) {
-      videoModal.classList.add('active');
+    if (videoContainer && loveVideo) {
+      videoContainer.classList.add('active');
       loveVideo.loop = true;
-      try {
-        loveVideo.load();
-      } catch(e){}
       loveVideo.currentTime = 0;
+      try { loveVideo.load(); } catch(e){}
+
+      // Try unmuted autoplay first (since user just interacted via drag)
+      loveVideo.muted = false;
       const playPromise = loveVideo.play();
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("Autoplay dicegah browser, silakan tekan tombol play pada video:", error);
+        playPromise.catch(() => {
+          // If iOS Safari/mobile blocks unmuted autoplay, autoplay muted & show tap hint
+          loveVideo.muted = true;
+          loveVideo.play().then(() => {
+            const hint = document.getElementById('soundHint');
+            if (hint) {
+              hint.classList.add('show');
+              setTimeout(() => hint.classList.remove('show'), 4000);
+            }
+          }).catch(err => console.log(err));
         });
       }
     }
   }
 
-  // Fallback listener agar video selalu looping
+  // Fallback listener agar video selalu looping berulang dari awal
   if (loveVideo) {
     loveVideo.loop = true;
     loveVideo.addEventListener('ended', () => {
@@ -564,20 +478,16 @@
     });
   }
 
-  function closeVideo() {
-    if (videoModal && loveVideo) {
-      videoModal.classList.remove('active');
-      loveVideo.pause();
-    }
-  }
-
-  if (closeVideoBtn) {
-    closeVideoBtn.addEventListener('click', closeVideo);
-  }
-
-  if (videoModal) {
-    videoModal.addEventListener('click', (e) => {
-      if (e.target === videoModal) closeVideo();
+  // Touch/Click anywhere on the full screen video to unmute audio if browser muted it
+  if (videoContainer) {
+    videoContainer.addEventListener('pointerdown', () => {
+      if (loveVideo) {
+        if (loveVideo.muted) {
+          loveVideo.muted = false;
+          loveVideo.play().catch(() => {});
+          document.getElementById('soundHint')?.classList.remove('show');
+        }
+      }
     });
   }
 </script>
