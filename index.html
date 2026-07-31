@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="lily.jpg">
 
 <style>
   :root{
@@ -450,6 +451,12 @@
   }
 
   /* =========================================================
+     PRELOAD & CACHE LILY IMAGE
+  ========================================================= */
+  const lilyCache = new Image();
+  lilyCache.src = 'lily.jpg';
+
+  /* =========================================================
      KONTROL VIDEO FULL SCREEN (Auto Play 100% Layar Full)
   ========================================================= */
   const videoContainer = document.getElementById('videoContainer');
@@ -460,26 +467,23 @@
     
     videoContainer.classList.add('active');
     loveVideo.loop = true;
+    
+    // iOS / Mobile requirement: Keep muted = true during play() so WebKit never pauses the video!
+    loveVideo.muted = true;
     loveVideo.currentTime = 0;
     try { loveVideo.load(); } catch(e){}
 
-    // iOS Safari requirement: set muted = true before play() to guarantee 100% autoplay
-    loveVideo.muted = true;
     const playPromise = loveVideo.play();
-    
     if (playPromise !== undefined) {
       playPromise.then(() => {
-        // Attempt unmuting audio immediately
-        loveVideo.muted = false;
-      }).catch(() => {
-        // If unmuting is blocked without explicit tap gesture, show hint
-        loveVideo.muted = true;
-        loveVideo.play().catch(() => {});
+        // Show sound hint for user to tap to unmute audio
         const hint = document.getElementById('soundHint');
         if (hint) {
           hint.classList.add('show');
           setTimeout(() => hint.classList.remove('show'), 4000);
         }
+      }).catch(err => {
+        console.log("Autoplay play error:", err);
       });
     }
   }
@@ -502,18 +506,16 @@
     });
   }
 
-  // Touch/Click anywhere on the full screen video to unmute audio if browser muted it
-  if (videoContainer) {
-    videoContainer.addEventListener('pointerdown', () => {
-      if (loveVideo) {
-        if (loveVideo.muted) {
-          loveVideo.muted = false;
-          loveVideo.play().catch(() => {});
-          document.getElementById('soundHint')?.classList.remove('show');
-        }
+  // Touch/Click anywhere to unmute audio instantly without pausing video
+  window.addEventListener('pointerdown', () => {
+    if (loveVideo && videoContainer && videoContainer.classList.contains('active')) {
+      if (loveVideo.muted) {
+        loveVideo.muted = false;
+        loveVideo.play().catch(() => {});
+        document.getElementById('soundHint')?.classList.remove('show');
       }
-    });
-  }
+    }
+  });
 </script>
 </body>
 </html>
