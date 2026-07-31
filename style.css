@@ -1,0 +1,466 @@
+/* ===============================
+   DESIGN SYSTEM & VARIABLES
+   =============================== */
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Outfit:wght@300;400;600&display=swap');
+
+:root {
+    --bg-primary: #1a0a10;
+    --bg-card: rgba(255, 252, 248, 0.95);
+    --color-rose: #c91833;
+    --color-rose-light: #ff6b8a;
+    --color-rose-soft: #e6a8b1;
+    --color-pink-glow: rgba(201, 24, 51, 0.15);
+    --color-text: #2a1520;
+    --color-text-light: #6b4a5a;
+    --font-display: 'Dancing Script', cursive;
+    --font-body: 'Outfit', sans-serif;
+    --shadow-card: 0 20px 60px rgba(100, 10, 30, 0.3), 0 0 100px rgba(201, 24, 51, 0.1);
+    --shadow-piece: 0 8px 25px rgba(0,0,0,0.25), 0 0 15px rgba(201, 24, 51, 0.2);
+    --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===============================
+   RESET & BASE
+   =============================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: linear-gradient(135deg, #1a0a10 0%, #2d0a1a 30%, #1a0a10 60%, #0d0510 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    overflow: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(201, 24, 51, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 107, 138, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(150, 20, 60, 0.04) 0%, transparent 70%);
+    animation: bgPulse 8s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes bgPulse {
+    0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+    100% { transform: scale(1.1) rotate(3deg); opacity: 1; }
+}
+
+/* ===============================
+   FLOATING PARTICLES
+   =============================== */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--color-rose-light);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat linear infinite;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(100vh) scale(0);
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-10vh) scale(1);
+    }
+}
+
+/* ===============================
+   CARD CONTAINER
+   =============================== */
+.card-container {
+    background: var(--bg-card);
+    width: 90%;
+    max-width: 700px;
+    padding: 40px 30px 50px;
+    text-align: center;
+    border-radius: 24px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 200, 210, 0.3);
+    animation: cardEntrance 1s var(--transition-smooth) forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes cardEntrance {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Decorative corner accents */
+.card-container::before,
+.card-container::after {
+    content: '✿';
+    position: absolute;
+    font-size: 1.4rem;
+    color: var(--color-rose-soft);
+    opacity: 0.5;
+}
+.card-container::before { top: 16px; left: 20px; }
+.card-container::after { bottom: 16px; right: 20px; }
+
+/* ===============================
+   TYPOGRAPHY
+   =============================== */
+.subtitle {
+    font-family: var(--font-display);
+    color: var(--color-rose-soft);
+    font-size: 1.3rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+    animation: fadeSlideIn 0.8s 0.3s var(--transition-smooth) both;
+}
+
+.title {
+    font-family: var(--font-display);
+    color: var(--color-rose);
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.2;
+    text-shadow: 0 2px 10px rgba(201, 24, 51, 0.15);
+    animation: fadeSlideIn 0.8s 0.5s var(--transition-smooth) both;
+}
+
+.instruction {
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-bottom: 35px;
+    animation: fadeSlideIn 0.8s 0.7s var(--transition-smooth) both;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===============================
+   PUZZLE AREA
+   =============================== */
+.puzzle-area {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    animation: fadeSlideIn 0.8s 0.9s var(--transition-smooth) both;
+}
+
+/* ===============================
+   DROP ZONE (Heart Outline Target)
+   =============================== */
+.drop-zone {
+    width: 200px;
+    height: 180px;
+    margin: 0 auto;
+    position: relative;
+    transition: transform 0.3s var(--transition-smooth);
+}
+
+.drop-zone.drag-over {
+    transform: scale(1.05);
+}
+
+.heart-outline {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: outlinePulse 2s ease-in-out infinite;
+}
+
+@keyframes outlinePulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Target slots - invisible grid cells within the heart */
+.target-slot {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    z-index: 2;
+}
+.target-slot[data-piece="1"] { top: 0; left: 0; }
+.target-slot[data-piece="2"] { top: 0; right: 0; }
+.target-slot[data-piece="3"] { bottom: 0; left: 0; }
+.target-slot[data-piece="4"] { bottom: 0; right: 0; }
+
+.target-slot.filled {
+    pointer-events: none;
+}
+
+/* ===============================
+   PUZZLE PIECES
+   =============================== */
+.puzzle-piece {
+    position: absolute;
+    width: 100px;
+    height: 90px;
+    cursor: grab;
+    z-index: 10;
+    transition: transform 0.3s var(--transition-smooth), box-shadow 0.3s var(--transition-smooth);
+    filter: drop-shadow(0 8px 20px rgba(201, 24, 51, 0.35));
+    animation: pieceEntrance 0.6s var(--transition-smooth) both;
+}
+
+.puzzle-piece:active {
+    cursor: grabbing;
+    transform: scale(1.15) rotate(0deg) !important;
+    z-index: 100;
+}
+
+.puzzle-piece:hover {
+    filter: drop-shadow(0 12px 30px rgba(201, 24, 51, 0.5));
+    transform: scale(1.08);
+}
+
+.puzzle-piece svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Scattered initial positions with rotations */
+#piece-1 {
+    top: 15px;
+    left: 5%;
+    transform: rotate(-15deg);
+    animation-delay: 1s;
+}
+
+#piece-2 {
+    top: 10px;
+    right: 5%;
+    left: auto;
+    transform: rotate(12deg);
+    animation-delay: 1.15s;
+}
+
+#piece-3 {
+    bottom: 10px;
+    top: auto;
+    left: 8%;
+    transform: rotate(8deg);
+    animation-delay: 1.3s;
+}
+
+#piece-4 {
+    bottom: 15px;
+    top: auto;
+    right: 8%;
+    left: auto;
+    transform: rotate(-10deg);
+    animation-delay: 1.45s;
+}
+
+@keyframes pieceEntrance {
+    from {
+        opacity: 0;
+        transform: scale(0.3) rotate(45deg);
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Placed state */
+.puzzle-piece.placed {
+    cursor: default;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 10px rgba(201, 24, 51, 0.2));
+    animation: placePop 0.5s var(--transition-smooth);
+}
+
+@keyframes placePop {
+    0% { transform: scale(1.2); }
+    50% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+/* ===============================
+   SUCCESS OVERLAY
+   =============================== */
+.success-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 252, 248, 0.97);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s var(--transition-smooth);
+    z-index: 50;
+    border-radius: 24px;
+}
+
+.success-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.success-heart {
+    width: 150px;
+    height: 135px;
+    animation: heartBeat 1s ease-in-out infinite;
+}
+
+.success-heart svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 30px rgba(201, 24, 51, 0.4));
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.15); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.1); }
+    60% { transform: scale(1); }
+}
+
+.success-text {
+    font-family: var(--font-display);
+    color: var(--color-rose);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s 0.5s, transform 0.6s 0.5s var(--transition-smooth);
+}
+
+.success-overlay.active .success-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===============================
+   LILY FLOWER ANIMATION
+   =============================== */
+.lily-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 200;
+}
+
+.lily {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-image: url('lily.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    opacity: 0;
+    animation: lilyFall linear forwards;
+}
+
+@keyframes lilyFall {
+    0% {
+        opacity: 0;
+        transform: translateY(-80px) rotate(0deg) scale(0.3);
+    }
+    10% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(110vh) rotate(720deg) scale(1);
+    }
+}
+
+/* ===============================
+   TOUCH / MOBILE SUPPORT
+   =============================== */
+@media (max-width: 600px) {
+    .card-container {
+        width: 95%;
+        padding: 25px 15px 35px;
+    }
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .subtitle {
+        font-size: 1.1rem;
+    }
+
+    .puzzle-area {
+        height: 280px;
+    }
+
+    .drop-zone {
+        width: 160px;
+        height: 144px;
+    }
+
+    .puzzle-piece {
+        width: 80px;
+        height: 72px;
+    }
+
+    #piece-1 { top: 10px; left: 2%; }
+    #piece-2 { top: 5px; right: 2%; }
+    #piece-3 { bottom: 5px; left: 3%; }
+    #piece-4 { bottom: 10px; right: 3%; }
+}

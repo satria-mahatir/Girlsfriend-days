@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For My Girl 🤍</title>
+
+<!--
+  CARA MENGGANTI FOTO:
+  Ada 3 slot foto di bagian galeri "my girl".
+  Cari komentar FOTO 1, FOTO 2, dst, lalu ganti src="..." dengan
+  foto kalian sendiri (taruh file sejajar file ini,
+  misal src="foto/pacarku.jpg").
+
+  CARA MENAMBAHKAN VIDEO:
+  Taruh file video kamu (misal: video.mp4, video.mov, atau video.webm)
+  di folder yang sama dengan file index.html ini dan beri nama "video.mp4".
+  Video akan otomatis diputar saat puzzle hati berhasil disatukan!
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --cream:#FBF5F1;
+    --paper:#FDF8F5;
+    --pink:#F7DEE0;
+    --pink-deep:#F0B9C2;
+    --red:#C6273B;
+    --red-deep:#9E1B2C;
+    --ink:#2B2320;
+    --muted:#8a7a74;
+    --shadow: 0 20px 50px rgba(198,39,59,0.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:#E7C6C9;
+    color:var(--ink);
+    font-family:'Jost',sans-serif;
+    font-weight:300;
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior-y:none;
+  }
+  .stage{ max-width:460px; margin:0 auto; background:var(--cream); position:relative; overflow:hidden; box-shadow:0 0 120px rgba(0,0,0,0.35); }
+
+  .eyebrow{ font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:14px; color:var(--red); text-align:center; }
+  .serif{ font-family:'Playfair Display',serif; }
+
+  section{ position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 26px; overflow:hidden; }
+
+  /* decorative scattered icons */
+  .deco{ position:absolute; opacity:0.9; pointer-events:none; user-select:none; }
+  .deco.star{ color:var(--red); font-size:18px; }
+  .deco.spark{ color:var(--pink-deep); font-size:14px; }
+  .deco.bang{ color:var(--red); font-size:26px; }
+
+  /* grid paper texture for lyric panels */
+  .grid-bg{
+    background-image:
+      linear-gradient(rgba(198,39,59,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(198,39,59,0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-color: var(--paper);
+  }
+
+  /* ============ HERO / PUZZLE ============ */
+  #hero{ background: linear-gradient(180deg, var(--pink) 0%, var(--cream) 70%); }
+  .hero-top{ text-align:center; margin-bottom:8px; }
+  .hero-top .tag{ font-size:11px; letter-spacing:0.28em; text-transform:uppercase; color:var(--muted); }
+  .hero-top h1{ font-family:'Playfair Display',serif; font-weight:700; font-size:26px; color:var(--red-deep);
+    background:linear-gradient(180deg, transparent 60%, var(--pink-deep) 60%); display:inline-block; padding:0 6px; margin-top:6px; }
+  .hero-top .sub{ font-family:'Playfair Display',serif; font-style:italic; font-size:16px; margin-top:14px; color:var(--ink); }
+
+  .puzzle-wrap{ position:relative; width:300px; height:300px; margin:26px auto 10px; touch-action:none; }
+  .slot-guide{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:150px; height:150px; pointer-events:none; }
+  .piece{
+    position:absolute; width:150px; height:150px; cursor:grab;
+    filter:drop-shadow(0 8px 16px rgba(198,39,59,0.35));
+    touch-action:none;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .piece.locked{ cursor:default; filter:drop-shadow(0 2px 5px rgba(198,39,59,0.18)); }
+  .piece svg{ width:100%; height:100%; display:block; pointer-events:none; }
+  .hint{ text-align:center; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:14px; }
+  .hint.done{ color:var(--red); }
+
+  /* flower burst overlay */
+  #burst{ position:fixed; inset:0; pointer-events:none; z-index:60; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  #burst span{ position:absolute; font-size:26px; opacity:0; will-change:transform, opacity; }
+
+  /* ============ LYRIC PANELS ============ */
+  .lyric{ text-align:center; }
+  .lyric p{ font-family:'Playfair Display',serif; font-style:italic; font-weight:500; font-size:30px; line-height:1.4; color:var(--ink); opacity:0; transform:translateY(18px); transition:opacity 1s ease, transform 1s ease; max-width:320px; }
+  .lyric.in p{ opacity:1; transform:translateY(0); }
+
+  /* ============ GALLERY ============ */
+  #gallery{ background:var(--pink); min-height:auto; padding:80px 22px; }
+  #gallery .eyebrow{ margin-bottom:6px; }
+  #gallery h2{ font-family:'Playfair Display',serif; font-weight:700; font-size:22px; text-align:center; color:var(--red-deep); margin-bottom:34px; }
+  .polaroids{ position:relative; display:flex; justify-content:center; align-items:flex-end; gap:0; height:280px; }
+  .polaroid{ background:#fff; padding:10px 10px 34px; box-shadow:var(--shadow); position:absolute; width:150px; }
+  .polaroid img{ width:100%; height:170px; object-fit:cover; display:block; }
+  .polaroid figcaption{ font-family:'Playfair Display',serif; font-style:italic; text-align:center; margin-top:8px; font-size:14px; color:var(--red); }
+  .p1{ left:6%; top:26px; transform:rotate(-9deg); z-index:1; }
+  .p2{ left:50%; top:0; transform:translateX(-50%) rotate(2deg); z-index:2; width:165px; }
+  .p2 img{ height:190px; }
+  .p3{ right:4%; top:34px; transform:rotate(8deg); z-index:1; }
+
+  /* ============ CLOSING (assembled heart) ============ */
+  #closing{ background:linear-gradient(180deg, var(--cream), var(--pink)); text-align:center; }
+  .heart-final{ width:130px; height:130px; margin:0 auto 22px; }
+  #closing h2{ font-family:'Playfair Display',serif; font-weight:700; font-size:24px; color:var(--red-deep); }
+  #closing p{ font-family:'Playfair Display',serif; font-style:italic; font-size:15px; color:var(--ink); margin-top:10px; max-width:280px; }
+  .replay-btn{ margin-top:26px; border:none; cursor:pointer; background:var(--red); color:#fff; font-family:'Jost',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; padding:13px 26px; border-radius:100px; box-shadow:0 12px 24px rgba(198,39,59,0.3); }
+
+  /* ============ SEAMLESS VIDEO OVERLAY (TANPA LATAR KOTAK) ============ */
+  .video-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 15, 14, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    padding: 20px;
+  }
+  .video-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.65);
+    transform: scale(0.88);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: transparent;
+  }
+  .video-modal.active .video-wrapper {
+    transform: scale(1);
+  }
+  .video-wrapper video {
+    width: 100%;
+    max-height: 72vh;
+    display: block;
+    border-radius: 22px;
+    outline: none;
+    background: #000;
+  }
+  .video-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .video-close-btn:hover {
+    transform: scale(1.1);
+    background: rgba(198, 39, 59, 0.85);
+  }
+  .video-hint {
+    margin-top: 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    pointer-events: none;
+  }
+
+  /* iPhone 13 & Mobile Device Optimizations */
+  @media (max-width: 480px) {
+    .stage {
+      max-width: 100vw;
+    }
+    .video-modal {
+      padding: max(16px, env(safe-area-inset-top, 16px)) 16px max(16px, env(safe-area-inset-bottom, 16px));
+    }
+    .video-card {
+      max-width: 92vw;
+      padding: 18px 14px;
+    }
+    .video-wrapper video {
+      max-height: 52vh;
+    }
+  }
+
+  ::selection{ background:var(--red); color:#fff; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- ============== HERO + PUZZLE ============== -->
+  <section id="hero">
+    <span class="deco star" style="top:8%;left:10%;">★</span>
+    <span class="deco spark" style="top:14%;right:14%;">✦</span>
+    <span class="deco bang" style="bottom:10%;left:8%;">!</span>
+    <span class="deco spark" style="bottom:16%;right:10%;">✦</span>
+
+    <div class="hero-top">
+      <p class="tag">happy</p>
+      <h1>National Girlfriend Day</h1>
+      <p class="sub">put us back together</p>
+    </div>
+
+    <div class="puzzle-wrap" id="puzzleWrap">
+      <svg class="slot-guide" viewBox="0 0 200 200">
+        <defs>
+          <clipPath id="slot-heart-clip">
+            <path d="M100 175 C 30 120, 10 75, 45 40 C 70 15, 100 35, 100 60 C 100 35, 130 15, 155 40 C 190 75, 170 120, 100 175 Z"/>
+          </clipPath>
+        </defs>
+        <path d="M100 175 C 30 120, 10 75, 45 40 C 70 15, 100 35, 100 60 C 100 35, 130 15, 155 40 C 190 75, 170 120, 100 175 Z" fill="none" stroke="rgba(198,39,59,0.35)" stroke-width="2.5" stroke-dasharray="8 6"/>
+        <path d="M 100 0 L 100 44 C 97 44, 96 48, 102 51 C 114 55, 114 65, 102 69 C 96 72, 97 76, 100 76 L 100 100 M 0 100 L 44 100 C 44 97, 48 96, 51 102 C 55 114, 65 114, 69 102 C 72 96, 76 97, 76 100 L 100 100 M 100 100 L 144 100 C 144 97, 148 96, 151 98 C 155 86, 165 86, 169 98 C 172 96, 176 97, 176 100 L 200 100 M 100 100 L 100 134 C 97 134, 96 138, 98 141 C 86 145, 86 155, 98 159 C 96 162, 97 166, 100 166 L 100 200" fill="none" stroke="rgba(198,39,59,0.22)" stroke-width="1.8" stroke-dasharray="4 4" clip-path="url(#slot-heart-clip)"/>
+      </svg>
+      <!-- 4 pieces generated by JS -->
+    </div>
+
+    <p class="hint" id="hint">drag each piece into place</p>
+  </section>
+
+  <!-- flower burst overlay, spawned by JS -->
+  <div id="burst"></div>
+
+  <!-- ============== LYRIC PANELS ============== -->
+  <section class="lyric grid-bg reveal">
+    <span class="deco star" style="top:10%;left:8%;">★</span>
+    <span class="deco bang" style="top:6%;right:10%;">!</span>
+    <p>you look so beautiful today</p>
+    <span class="deco spark" style="bottom:12%;left:14%;">✦</span>
+  </section>
+
+  <section class="lyric grid-bg reveal">
+    <span class="deco spark" style="top:12%;right:12%;">✦</span>
+    <p>and I love this view</p>
+    <span class="deco bang" style="bottom:8%;left:10%;">!</span>
+  </section>
+
+  <section class="lyric grid-bg reveal">
+    <span class="deco star" style="top:8%;left:12%;">★</span>
+    <p>we fell in love in october</p>
+    <span class="deco spark" style="bottom:10%;right:14%;">✦</span>
+  </section>
+
+  <section class="lyric grid-bg reveal">
+    <span class="deco bang" style="top:10%;right:10%;">!</span>
+    <p>that's why</p>
+    <span class="deco star" style="bottom:12%;left:12%;">★</span>
+  </section>
+
+  <section class="lyric grid-bg reveal">
+    <span class="deco spark" style="top:10%;left:10%;">✦</span>
+    <p>looking at the way you smile</p>
+    <span class="deco bang" style="bottom:10%;right:12%;">!</span>
+  </section>
+
+  <section class="lyric grid-bg reveal">
+    <span class="deco star" style="top:10%;right:12%;">★</span>
+    <p>admiring you from right beside me</p>
+    <span class="deco spark" style="bottom:10%;left:14%;">✦</span>
+  </section>
+
+  <!-- ============== GALLERY ============== -->
+  <section id="gallery" class="reveal">
+    <p class="eyebrow">for you</p>
+    <h2>my girl</h2>
+    <div class="polaroids">
+      <!-- FOTO 1 -->
+      <figure class="polaroid p1"><img src="WhatsApp Image 2026-07-29 at 13.12.13.jpeg" alt="my girl 1"><figcaption>my girl</figcaption></figure>
+      <!-- FOTO 2 -->
+      <figure class="polaroid p2"><img src="WhatsApp Image 2026-07-29 at 13.12.14.jpeg" alt="my girl 2"><figcaption>my girl</figcaption></figure>
+      <!-- FOTO 3 -->
+      <figure class="polaroid p3"><img src="WhatsApp Image 2026-07-29 at 13.12.14 (1).jpeg" alt="my girl 3"><figcaption>my girl</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ============== CLOSING ============== -->
+  <section id="closing" class="reveal">
+    <svg class="heart-final" viewBox="0 0 200 200"><path d="M100 175 C 30 120, 10 75, 45 40 C 70 15, 100 35, 100 60 C 100 35, 130 15, 155 40 C 190 75, 170 120, 100 175 Z" fill="var(--red)"/></svg>
+    <h2>Happy National Girlfriend Day</h2>
+    <p>every piece of you is my favorite part.</p>
+    <button class="replay-btn" id="replayBtn">Put Us Back Together Again</button>
+  </section>
+
+</div>
+
+<!-- VIDEO OVERLAY (Tanpa latar kotak, langsung video seamless) -->
+<div class="video-modal" id="videoModal">
+  <div class="video-wrapper">
+    <button class="video-close-btn" id="closeVideoBtn" title="Tutup video">✕</button>
+    <video id="loveVideo" playsinline controls loop preload="auto">
+      <source src="vidio.mp4" type="video/mp4">
+      <source src="video.mp4" type="video/mp4">
+      <source src="video.mov" type="video/quicktime">
+      <source src="video.webm" type="video/webm">
+      Browser kamu tidak mendukung pemutaran video.
+    </video>
+  </div>
+  <p class="video-hint">Ketuk di luar video untuk menutup ❤️</p>
+</div>
+
+<script>
+  /* =========================================================
+     LIRIK — ganti sesuai kata-kata / lagu pilihan kalian
+     (array ini cuma dipakai untuk referensi timing musik opsional)
+  ========================================================= */
+  const LYRICS = [
+    "you look so beautiful today",
+    "and I love this view",
+    "we fell in love in october",
+    "that's why",
+    "looking at the way you smile",
+    "admiring you from right beside me"
+  ];
+
+  /* =========================================================
+     PUZZLE HATI — drag 4 potongan ke posisi yang benar
+  ========================================================= */
+  const wrap = document.getElementById('puzzleWrap');
+  const wrapRect = () => wrap.getBoundingClientRect();
+
+  // 4 interlocking jigsaw pieces (with tabs and indents / lengkungan puzzle)
+  const pieceDefs = [
+    { 
+      key: 'tl', 
+      clip: 'M 0 0 L 100 0 L 100 44 C 97 44, 96 48, 102 51 C 114 55, 114 65, 102 69 C 96 72, 97 76, 100 76 L 100 100 L 76 100 C 76 97, 72 96, 69 102 C 65 114, 55 114, 51 102 C 48 96, 44 97, 44 100 L 0 100 Z',
+      scatter: [-60, -35, -14]
+    },
+    { 
+      key: 'tr', 
+      clip: 'M 100 0 L 200 0 L 200 100 L 176 100 C 176 97, 172 96, 169 98 C 165 86, 155 86, 151 98 C 148 96, 144 97, 144 100 L 100 100 L 100 76 C 97 76, 96 72, 102 69 C 114 65, 114 55, 102 51 C 96 48, 97 44, 100 44 Z',
+      scatter: [210, -25, 12]
+    },
+    { 
+      key: 'bl', 
+      clip: 'M 0 100 L 44 100 C 44 97, 48 96, 51 102 C 55 114, 65 114, 69 102 C 72 96, 76 97, 76 100 L 100 100 L 100 134 C 97 134, 96 138, 98 141 C 86 145, 86 155, 98 159 C 96 162, 97 166, 100 166 L 100 200 L 0 200 Z',
+      scatter: [-70, 180, 10]
+    },
+    { 
+      key: 'br', 
+      clip: 'M 100 100 L 144 100 C 144 97, 148 96, 151 98 C 155 86, 165 86, 169 98 C 172 96, 176 97, 176 100 L 200 100 L 200 200 L 100 200 L 100 166 C 97 166, 96 162, 98 159 C 86 155, 86 145, 98 141 C 96 138, 97 134, 100 134 Z',
+      scatter: [215, 185, -12]
+    }
+  ];
+
+  const HEART_PATH = 'M100 175 C 30 120, 10 75, 45 40 C 70 15, 100 35, 100 60 C 100 35, 130 15, 155 40 C 190 75, 170 120, 100 175 Z';
+
+  const ALL_SEAMS = 'M 100 0 L 100 44 C 97 44, 96 48, 102 51 C 114 55, 114 65, 102 69 C 96 72, 97 76, 100 76 L 100 100 M 0 100 L 44 100 C 44 97, 48 96, 51 102 C 55 114, 65 114, 69 102 C 72 96, 76 97, 76 100 L 100 100 M 100 100 L 144 100 C 144 97, 148 96, 151 98 C 155 86, 165 86, 169 98 C 172 96, 176 97, 176 100 L 200 100 M 100 100 L 100 134 C 97 134, 96 138, 98 141 C 86 145, 86 155, 98 159 C 96 162, 97 166, 100 166 L 100 200';
+
+  let locked = 0;
+  const pieces = [];
+
+  pieceDefs.forEach((q, i) => {
+    const piece = document.createElement('div');
+    piece.className = 'piece';
+    piece.innerHTML = `
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <clipPath id="clip-${q.key}"><path d="${q.clip}"/></clipPath>
+        </defs>
+        <!-- Heart Red Fill -->
+        <path d="${HEART_PATH}" fill="#C6273B" clip-path="url(#clip-${q.key})"/>
+        <!-- Soft Inner 3D Highlight -->
+        <path d="${HEART_PATH}" fill="none" stroke="rgba(255,220,225,0.4)" stroke-width="2.5" clip-path="url(#clip-${q.key})"/>
+        <!-- Interlocking Jigsaw Seams (Clipped to heart - NO square box!) -->
+        <path d="${ALL_SEAMS}" fill="none" stroke="#7E1220" stroke-width="2" clip-path="url(#clip-${q.key})"/>
+        <!-- Pure Heart Outer Contour -->
+        <path d="${HEART_PATH}" fill="none" stroke="#7E1220" stroke-width="1.8" clip-path="url(#clip-${q.key})"/>
+      </svg>
+    `;
+    wrap.appendChild(piece);
+
+    const [sx, sy, rot] = q.scatter;
+    piece.style.left = sx + 'px';
+    piece.style.top = sy + 'px';
+    piece.style.transform = `rotate(${rot}deg)`;
+    piece.dataset.rot = rot;
+
+    // All pieces assemble to targetX=75, targetY=75 inside the 300x300 container
+    const targetX = 75;
+    const targetY = 75;
+
+    let dragging = false, offX = 0, offY = 0;
+
+    piece.addEventListener('pointerdown', (e) => {
+      if (piece.classList.contains('locked')) return;
+      dragging = true;
+      piece.setPointerCapture(e.pointerId);
+      const r = piece.getBoundingClientRect();
+      offX = e.clientX - r.left;
+      offY = e.clientY - r.top;
+      piece.style.transition = 'none';
+      piece.style.zIndex = 10;
+    });
+
+    piece.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const wr = wrapRect();
+      let nx = e.clientX - wr.left - offX;
+      let ny = e.clientY - wr.top - offY;
+      piece.style.left = nx + 'px';
+      piece.style.top = ny + 'px';
+    });
+
+    function endDrag() {
+      if (!dragging) return;
+      dragging = false;
+      const curX = parseFloat(piece.style.left);
+      const curY = parseFloat(piece.style.top);
+      const dist = Math.hypot(curX - targetX, curY - targetY);
+      piece.style.transition = 'left .3s ease, top .3s ease, transform .3s ease';
+      if (dist < 35) {
+        piece.style.left = targetX + 'px';
+        piece.style.top = targetY + 'px';
+        piece.style.transform = 'rotate(0deg)';
+        piece.classList.add('locked');
+        locked++;
+        if (locked === 4) onSolved();
+      } else {
+        piece.style.left = sx + 'px';
+        piece.style.top = sy + 'px';
+        piece.style.transform = `rotate(${rot}deg)`;
+      }
+    }
+    piece.addEventListener('pointerup', endDrag);
+    piece.addEventListener('pointercancel', endDrag);
+
+    pieces.push({ piece, sx, sy, rot });
+  });
+
+  function resetPuzzle() {
+    locked = 0;
+    document.getElementById('hint').textContent = 'drag each piece into place';
+    document.getElementById('hint').classList.remove('done');
+    pieces.forEach(p => {
+      p.piece.classList.remove('locked');
+      p.piece.style.transition = 'left .5s ease, top .5s ease, transform .5s ease';
+      p.piece.style.left = p.sx + 'px';
+      p.piece.style.top = p.sy + 'px';
+      p.piece.style.transform = `rotate(${p.rot}deg)`;
+    });
+  }
+
+  function onSolved() {
+    document.getElementById('hint').textContent = '♥ together again ♥';
+    document.getElementById('hint').classList.add('done');
+    flowerBurst();
+    
+    // Play video popup after the flower burst spam completes
+    setTimeout(() => {
+      playVideo();
+    }, 1200);
+  }
+
+  document.getElementById('replayBtn').addEventListener('click', () => {
+    resetPuzzle();
+    document.getElementById('hero').scrollIntoView({ behavior:'smooth' });
+  });
+
+  /* =========================================================
+     LEDAKAN BUNGA (SPAM DARI TENGAH PUZZLE / SCREEN)
+  ========================================================= */
+  const FLOWERS = ['🌸','🌺','💐','🌷','❤️','💖','✨','💕','🎀','🌹'];
+  function flowerBurst() {
+    const host = document.getElementById('burst');
+    host.innerHTML = '';
+    
+    const pWrap = document.getElementById('puzzleWrap');
+    const pRect = pWrap ? pWrap.getBoundingClientRect() : null;
+
+    // Center of puzzle heart on screen
+    const originX = pRect ? (pRect.left + pRect.width / 2) : (window.innerWidth / 2);
+    const originY = pRect ? (pRect.top + pRect.height / 2) : (window.innerHeight * 0.45);
+
+    // Spam 4 staggered waves of flower explosion
+    const waves = [0, 100, 220, 350];
+    waves.forEach((delay) => {
+      setTimeout(() => {
+        const countPerWave = 22;
+        for (let i = 0; i < countPerWave; i++) {
+          const el = document.createElement('span');
+          el.textContent = FLOWERS[Math.floor(Math.random() * FLOWERS.length)];
+          
+          const angle = Math.random() * Math.PI * 2;
+          const dist = 70 + Math.random() * 240;
+          const tx = Math.cos(angle) * dist;
+          const ty = Math.sin(angle) * dist;
+          const rot = (Math.random() - 0.5) * 600;
+
+          el.style.position = 'fixed';
+          el.style.left = originX + 'px';
+          el.style.top = originY + 'px';
+          el.style.fontSize = (18 + Math.random() * 22) + 'px';
+          el.style.pointerEvents = 'none';
+          el.style.zIndex = '99';
+
+          el.animate([
+            { transform: 'translate(-50%, -50%) scale(0.2) rotate(0deg)', opacity: 1 },
+            { transform: `translate(calc(-50% + ${tx * 0.5}px), calc(-50% + ${ty * 0.5}px)) scale(1.4) rotate(${rot * 0.5}deg)`, opacity: 1, offset: 0.4 },
+            { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0.6) rotate(${rot}deg)`, opacity: 0 }
+          ], { 
+            duration: 1200 + Math.random() * 600, 
+            easing: 'cubic-bezier(0.15, 0.85, 0.35, 1.2)' 
+          });
+
+          host.appendChild(el);
+          setTimeout(() => el.remove(), 2000);
+        }
+      }, delay);
+    });
+  }
+
+  /* =========================================================
+     SCROLL REVEAL
+  ========================================================= */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.reveal, .lyric').forEach(el => io.observe(el));
+
+  /* =========================================================
+     KONTROL VIDEO (Muncul & Play Looping Saat Puzzle Selesai)
+  ========================================================= */
+  const videoModal = document.getElementById('videoModal');
+  const loveVideo = document.getElementById('loveVideo');
+  const closeVideoBtn = document.getElementById('closeVideoBtn');
+
+  function playVideo() {
+    if (videoModal && loveVideo) {
+      videoModal.classList.add('active');
+      loveVideo.loop = true;
+      try {
+        loveVideo.load();
+      } catch(e){}
+      loveVideo.currentTime = 0;
+      const playPromise = loveVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Autoplay dicegah browser, silakan tekan tombol play pada video:", error);
+        });
+      }
+    }
+  }
+
+  // Fallback listener agar video selalu looping
+  if (loveVideo) {
+    loveVideo.loop = true;
+    loveVideo.addEventListener('ended', () => {
+      loveVideo.currentTime = 0;
+      loveVideo.play().catch(() => {});
+    });
+  }
+
+  function closeVideo() {
+    if (videoModal && loveVideo) {
+      videoModal.classList.remove('active');
+      loveVideo.pause();
+    }
+  }
+
+  if (closeVideoBtn) {
+    closeVideoBtn.addEventListener('click', closeVideo);
+  }
+
+  if (videoModal) {
+    videoModal.addEventListener('click', (e) => {
+      if (e.target === videoModal) closeVideo();
+    });
+  }
+</script>
+</body>
+</html>
